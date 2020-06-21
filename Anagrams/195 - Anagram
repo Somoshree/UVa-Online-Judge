@@ -1,1 +1,44 @@
-
+//Accepted Solution by UVa online judge
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <set>
+#include <vector>
+using namespace std;
+bool comparechar(char ch1,char ch2)
+{
+    if(ch1>=65 && ch1<=90)
+    {
+        if(ch2>=65 && ch2<=90)
+            return (ch1<ch2);
+        else
+            return (ch1+32<=ch2);
+    }
+    else{
+        if(ch2>=65 && ch2<=90)
+            return (ch1-32<ch2);
+        else
+            return (ch1<ch2);
+    }
+    return false;
+}
+int main() {
+    string s;
+    long int N;
+    cin>>N;
+    cin.ignore(32767,'\n') ;
+    while(N--)
+    {
+        set<string> sets;
+        getline(cin,s);
+        sort(s.begin(),s.end(),comparechar);
+        do{
+            if(sets.count(s)==0)
+            {
+                cout<<s<<endl;
+                sets.insert(s);
+            }
+        }while(next_permutation(s.begin(),s.end(),comparechar));
+    }
+	return 0;
+}
