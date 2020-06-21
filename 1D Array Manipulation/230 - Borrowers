@@ -1,1 +1,74 @@
+#Accepted solution by UVa online judge
 
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+using namespace std;
+void preprocess(string str,vector<vector<string>>& vec)
+{
+    string title,author;
+    size_t found = str.find("by");
+    title=str.substr(0,found-1);
+    author=str.substr(found+3,str.length()-found+4);
+    vector<string> v;
+    v.push_back(author);
+    v.push_back(title);
+    vec.push_back(v);
+}
+void printbooks(vector<vector<string>> vec,vector<string>& vborrow,vector<string>& vreturn)
+{
+    vector<vector<string>>::iterator itr;
+    vector<string>::iterator itr1;
+    for(itr=vec.begin();itr!=vec.end();++itr)
+    {
+        string str=(*itr)[1];
+        if(find(vreturn.begin(),vreturn.end(),str)!=vreturn.end())
+        {
+            if(itr==vec.begin())
+                cout<<"Put "<<str<<" first"<<endl;
+            else
+            {
+                int k=1;
+                int maxlim=itr-vec.begin();
+                while(k<=maxlim && find(vborrow.begin(),vborrow.end(),(*(itr-k))[1])!=vborrow.end())
+                    ++k;
+                if(k>maxlim)
+                    cout<<"Put "<<str<<" first"<<endl;
+                else
+                    cout<<"Put "<<str<<" after "<<(*(itr-k))[1]<<endl;
+            }
+        }
+    }
+}
+int main() {
+    string str,s;
+    vector<vector<string>> vec;
+    while(getline(cin,str) && str!="END")
+        preprocess(str,vec);
+    sort(vec.begin(),vec.end());
+    vector<vector<string>>::iterator itr;
+    vector<string> vreturn;
+    vector<string> vborrow;
+    while(getline(cin,str) && str!="END")
+    {
+        size_t found=str.find(' ');
+        if(str.substr(0,found)=="BORROW")
+            vborrow.push_back(str.substr(found+1,str.length()-found));
+        else if(str.substr(0,found)=="RETURN"){
+            vreturn.push_back(str.substr(found+1,str.length()-found));
+            vector<string>::iterator itr;
+            itr=find(vborrow.begin(),vborrow.end(),str.substr(found+1,str.length()-found));
+            if(itr!=vborrow.end())
+                vborrow.erase(itr);
+        }
+        else
+        {
+            printbooks(vec,vborrow,vreturn);
+            vreturn.clear();
+            cout<<"END"<<endl;
+        }
+    }
+	return 0;
+}
